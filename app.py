@@ -32,14 +32,14 @@ def handle_order(data):
     # Example: price logic can be customized here
     if total_orders % 3 == 0:
         # if drinks[idx]["price"] < 5:
-            drinks[idx]["price"] += 1
-            max_price = max(d["price"] for d in drinks)
-            if max_price >= 5:
-                other_indices = [i for i in range(len(drinks)) if i != idx]
-                num_to_decrease = random.randint(1, len(other_indices))
-                drinks_to_decrease = random.sample(other_indices, num_to_decrease)
-                for i in drinks_to_decrease:
-                    drinks[i]["price"] = max(5, drinks[i]["price"] - 1)
+        drinks[idx]["price"] = min(5, drinks[idx]["price"] + 1)
+        max_price = max(d["price"] for d in drinks)
+        if max_price >= 5:
+            other_indices = [i for i in range(len(drinks)) if i != idx]
+            num_to_decrease = random.randint(1, len(other_indices))
+            drinks_to_decrease = random.sample(other_indices, num_to_decrease)
+            for i in drinks_to_decrease:
+                drinks[i]["price"] = max(1, min(5, drinks[i]["price"] - 1))
 
     # Record current prices
     price_history.append({
@@ -50,7 +50,6 @@ def handle_order(data):
     display_drinks = [{**d, "price": int(round(d["price"]))} for d in drinks]
     emit("update", {"drinks": display_drinks, "history": price_history}, broadcast=True)
 
-# --- Real-time price variance for $5 drinks ---
 def price_variance_task():
     while True:
         time.sleep(3)  # Change for rate of price change
@@ -58,7 +57,7 @@ def price_variance_task():
         for d in drinks:
             bounce = random.choice([-1, 1])
             new_price = round(d["price"] + bounce, 2)
-            if new_price >= 1:
+            if 1 <= new_price <= 5:
                 d["price"] = new_price
                 changed = True
         if changed:
