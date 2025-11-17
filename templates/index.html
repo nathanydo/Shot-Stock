@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Drink Stock Market</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=TASA+Orbiter:wght@400..800&display=swap" rel="stylesheet">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <div class="stats">
+        <h3>Total Orders: <span id="totalOrders">0</span></h3>
+    </div>
+
+    <div class="container">
+        <div class="drinks-section">
+            <h2>Available Drinks</h2>
+            <div id="drinks"></div>
+        </div>
+
+        <div class="chart-section">
+            <h2>Market Table</h2>
+            <table id="marketTable">
+                <thead>
+                    <tr>
+                        <th>Drink</th>
+                        <th>Price ($)</th>
+                        <th>Change</th>
+                        <th>Sales</th>
+                    </tr>
+                </thead>
+                <tbody id="marketTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+
+        let totalOrders = 0;
+        let lastPrices = [];
+
+        function orderDrink(index) {
+            socket.emit('order', { drink_index: index });
+        }
+
+
+        function updateDisplay(data) {
+            const drinks = data.drinks;
+            const history = data.history;
+
+            totalOrders = drinks.reduce((sum, d) => sum + d.sales, 0);
+            document.getElementById('totalOrders').textContent = totalOrders;
+
+            // Update drink list
+            const drinksDiv = document.getElementById('drinks');
+            drinksDiv.innerHTML = drinks.map((drink, index) => `
+                <div class="drink">
+                    <div class="drink-info">
+                        <div class="drink-name">${drink.name}</div>
+                        <div class="drink-price">$${drink.price}</div>
+                        <div class="drink-sales">Sales: ${drink.sales}</div>
+                    </div>
+                    <button onclick="orderDrink(${index})">Order</button>
+                </div>
+            `).join('');
+
+            // --- Market Table ---
+            const tbody = document.getElementById('marketTableBody');
+            let prevPrices = lastPrices.length === drinks.length ? lastPrices : drinks.map(d => d.price);
+            tbody.innerHTML = drinks.map((drink, i) => {
+                let change = drink.price - prevPrices[i];
+                let changeStr = '';
+                let arrow = '';
+                let color = '';
+                if (change > 0) {
+                    changeStr = `+${change}`;
+                    arrow = '▲';
+                    color = 'green';
+                } else if (change < 0) {
+                    changeStr = `${change}`;
+                    arrow = '▼';
+                    color = 'red';
+                } else {
+                    changeStr = '0';
+                    arrow = '';
+                    color = '';
+                }
+                return `<tr>
+                    <td>${drink.name}</td>
+                    <td style="font-weight:bold;">$${drink.price}</td>
+                    <td style="color:${color};font-weight:bold;">${arrow} ${changeStr}</td>
+                    <td>${drink.sales}</td>
+                    <!-- Removed Order button column -->
+                </tr>`;
+            }).join('');
+            lastPrices = drinks.map(d => d.price);
+        }
+
+        socket.on('update', updateDisplay);
+
+        // Initial load
+        fetch('/').then(() => {
+            const drinks = {{ drinks | tojson
+        }};
+        updateDisplay({ drinks: drinks, history: [] });
+        });
+    </script>
+</body>
+
+</html>

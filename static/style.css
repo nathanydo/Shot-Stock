@@ -1,0 +1,131 @@
+body {
+    font-family: "TASA Orbiter", sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #37475a;
+    color: #f1f1f1;
+}
+
+h1 {
+    text-align: center;
+    color: #f1f1f1;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.drinks-section {
+    background: #7b7e97;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px #0000001a;
+}
+
+.chart-section {
+    background: #7b7e97;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.drink {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin: 10px 0;
+    background: #f0eeeb;
+    border-radius: 2px;
+    border-left: 4px solid #4CAF50;
+}
+
+.drink-info {
+    flex: 1;
+}
+
+.drink-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.drink-price {
+    font-size: 24px;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.drink-sales {
+    font-size: 14px;
+    color: #666;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.stats {
+    text-align: center;
+    margin: 20px 0;
+    padding: 10px;
+    background: #7b7e97;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr;
+    }
+}
+
+#marketTable {
+    width: 90%;
+    /* Change table width */
+    margin: 40px auto;
+    /* Top/bottom and left/right margin */
+    border-collapse: collapse;
+    text-align: center;
+    background: #706e6e;
+    color: #ffffff;
+    /* Table background color */
+}
+
+#marketTable th,
+#marketTable td {
+    padding: 16px 24px;
+    /* Cell padding */
+    border: 1px solid #00000056;
+    /* Cell border color */
+}
+
+#marketTable th {
+    background: #222c35;
+    /* Header background color */
+    color: #fff;
+    /* Header text color */
+}
+
+#marketTable tr:nth-child(even) {
+    background: #465e77;
+    /* Even row color */
+}
+
+#marketTable tr:nth-child(odd) {
+    background: #2a313a;
+    /* Odd row color */
+}
